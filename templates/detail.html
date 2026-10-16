@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block title %}{{specimen.sample_code}}{% endblock %}
+{% block content %}
+<div class="detail-head"><div><a href="/" class="back">← 시료 목록</a><div class="section-title compact"><div><span class="eyebrow">SPECIMEN / {{specimen.sample_code}}</span><h1>{{specimen.label}}</h1><p>{{specimen.project}} · {{specimen.sample_type}}</p></div></div></div><span class="state {% if specimen.status=='인수 완료' %}state-done{% endif %}">{{specimen.status}}</span></div>
+{% if created or transferred or moved %}<div class="message-success">✓ {% if created %}시료 등록{% elif transferred %}인계·인수 기록{% else %}보관 위치 변경{% endif %}이 저장되었습니다.</div>{% endif %}
+<div class="detail-cards"><div class="detail-metric"><span>현재 보관 장소</span><strong>{{specimen.current_location}}</strong><small>최신 위치 기준</small></div><div class="detail-metric"><span>현재 담당자</span><strong>{{specimen.current_custodian}}</strong><small>현재 관리 책임자</small></div><div class="detail-metric"><span>수량</span><strong>{{specimen.quantity|round(1)}} {{specimen.unit}}</strong><small>등록 기준 수량</small></div><div class="detail-metric"><span>등록일</span><strong class="small-strong">{{specimen.created_at[:10]}}</strong><small>{{specimen.created_at[11:]}}</small></div></div>
+<div class="detail-columns">
+ <div class="detail-main">
+ <section class="panel form-panel"><div class="panel-heading"><div><span class="eyebrow">TRANSFER</span><h2>인계·인수 기록</h2></div><span class="step-pill">서명 확인</span></div>
+ <p class="panel-explainer">현재 담당자로부터 인수자에게 시료를 전달하고, 인수 확인 내용을 기록합니다.</p>
+ <form method="post" action="/specimens/{{specimen.id}}/handover" enctype="multipart/form-data" class="handover-form" data-sign-form>
+ <div class="form-grid"><label>인계자<input value="{{specimen.current_custodian}}" readonly/></label><label>인수자 <b>*</b><input name="to_person" placeholder="예: 담당자 나" required/></label><label>현재 위치<input value="{{specimen.current_location}}" readonly/></label><label>인계 후 보관 장소 <b>*</b><input name="location" placeholder="예: 분석실 냉장고 B-2" required/></label></div>
+ <label class="full-label">인수 사진 (선택)<input name="photo" type="file" accept="image/png,image/jpeg,image/webp"/><small>인계 시료와 봉인 상태 등을 기록할 수 있습니다.</small></label>
+ <label class="full-label">인계 메모<textarea name="note" rows="2" placeholder="특이사항, 수량 확인 결과 등"></textarea></label>
+ <div class="sign-head"><div><b>✍️ 인수 확인 서명</b><small>아래 영역에 마우스나 손가락으로 서명해 주세요.</small></div><button type="button" class="plain-button clear-sign">지우기</button></div>
+ <canvas id="signature-pad" class="signature-pad" width="700" height="200" aria-label="인수 서명 영역"></canvas>
+ <input type="hidden" name="signature_data" id="signature-data"/><label class="full-label">서명한 인수자 이름 <b>*</b><input name="signed_by" placeholder="인수자 이름과 동일하게 입력" required/></label>
+ <label class="check-confirm"><input type="checkbox" name="confirm" value="yes" required/> 시료 인수 사실을 확인하고 위 서명을 기록하는 데 동의합니다.</label>
+ <button class="action wide-action" type="submit">인계·인수 완료 기록하기 →</button>
+ </form>
+ </section>
+ <section class="panel form-panel location-panel"><div class="panel-heading"><div><span class="eyebrow">LOCATION</span><h2>보관 위치 변경</h2></div></div><form method="post" action="/specimens/{{specimen.id}}/move" class="handover-form"><div class="form-grid"><label>새 보관 장소 <b>*</b><input name="location" placeholder="새 보관 장소" required/></label><label>변경 담당자 <b>*</b><input name="actor" placeholder="예: 담당자 가" required/></label></div><label class="full-label">변경 사유<textarea name="note" rows="2" placeholder="이동 이유"></textarea></label><button type="submit" class="subtle-button">위치 변경 기록하기</button></form></section>
+ </div>
+ <aside class="detail-side"><section class="panel timeline-panel"><div class="panel-heading"><div><span class="eyebrow">AUDIT TRAIL</span><h2>전체 이력</h2></div><span class="step-pill">{{events|length}}건</span></div><div class="timeline">
+  {% for event in events %}<article class="timeline-item"><div class="timeline-marker"></div><b>{{event.event_type}}</b><small>{{event.created_at}}</small><p>{{event.from_person}} → {{event.to_person}}</p><p class="path">{{event.from_location}} → {{event.to_location}}</p>{% if event.note %}<p class="note">{{event.note}}</p>{% endif %}{% if event.photo_path %}<a class="media-link" target="_blank" rel="noopener noreferrer" href="/media/{{event.photo_path}}">📷 당시 사진 보기 ↗</a>{% endif %}{% if event.signature_path %}<div class="signature-view"><span>인수자 서명 · {{event.signed_by}}</span><img src="/media/{{event.signature_path}}" alt="인수자 확인 서명"/></div>{% endif %}</article>
+  {% endfor %}
+  </div></section>
+  <div class="tip-card">📌 <b>이력 관리 원칙</b><p>이전 기록을 덮어쓰지 않고, 등록·인계·위치 변경 사건을 시간순으로 추가 기록합니다. 실제 서비스에서는 인증과 서버 감사 로그 등이 더 필요합니다.</p></div>
+ </aside>
+</div>
+{% endblock %}
