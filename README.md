@@ -1,0 +1,65 @@
+# TRACE · 시료 인수인계 관리 시스템
+
+해양 환경조사에서 시료 전달 후 **인수 여부·보관 위치·담당자**를 전화와 메신저로 반복 확인해야 했던 업무 문제를 바탕으로 만든 **포트폴리오용 실행 가능한 웹앱 MVP**입니다.
+
+> **중요:** 실제 근무 당시의 시스템이나 원본 시료 데이터를 게시한 저장소가 아닙니다. 실제 경험을 재구성한 프로토타입이며, 등장하는 이름·프로젝트·시료코드는 **모두 가상 데이터**입니다. 과거의 정량적 성과를 이 코드로 검증한 것은 아닙니다.
+
+## 핵심 기능
+
+| 기능 | 로컬 FastAPI MVP | 공개 Streamlit 데모 |
+|---|:---:|:---:|
+| 시료 목록·검색·필터·이력 조회 | ✅ | ✅ (가상 데이터) |
+| 신규 시료 등록·중복 코드 방지 | ✅ | — |
+| 담당자·보관장소 변경 및 이력 기록 | ✅ | — |
+| 사진 첨부 및 인수자 확인 서명 | ✅ | — |
+| CSV 다운로드 | ✅ | ✅ (가상 데이터) |
+| SQLite에 시료·이력 저장 | ✅ | — |
+
+## 로컬 FastAPI 실행 — 입력·사진·서명 기능
+
+Python 3.10 이상에서 실행하세요.
+
+```bash
+python -m pip install -r requirements.txt
+python app.py
+```
+
+접속 주소: **http://127.0.0.1:8502** (본인 컴퓨터 전용). Windows에서는 `run_windows.bat`로 실행할 수 있습니다.
+최초 실행 시 **가상 시료 4건**이 저장됩니다. 사진·서명·DB는 프로젝트의 `local_data/` 폴더에 기록되며 **GitHub에 업로드되지 않습니다**.
+
+## 공개 온라인 데모 — 읽기 전용
+
+`demo_readonly.py`는 FastAPI 로컬 쓰기 API나 실제 DB를 불러오지 않고, 파일에 포함된 **가상 시료만 표시하는 별도의 Streamlit 앱**입니다.
+
+```bash
+python -m streamlit run demo_readonly.py
+```
+
+[Streamlit Community Cloud](https://share.streamlit.io/)에서 다음처럼 배포할 수 있습니다.
+
+- Repository: `rlaqhfla0917-bit/trace-sample-handover`
+- Branch: `main`
+- Main file path: `demo_readonly.py`
+
+**`app.py`는 인증 없는 등록·서명 기능을 포함하므로 공개 서버에 배포하면 안 됩니다.** `demo_readonly.py`만 공개 데모로 사용하세요.
+
+## 테스트
+
+```bash
+python -m pip install pytest httpx
+python -m pytest -q
+```
+
+코드의 핵심 기능은 FastAPI `TestClient`를 통해 격리된 임시 데이터베이스에서 검증합니다.
+
+## 기술 스택
+
+**Python · FastAPI · Jinja2 · Vanilla JavaScript · CSS · SQLite · Pillow · Streamlit(읽기 전용 데모)**
+
+## 보안 및 품질 개선 과제
+
+이 앱은 내부 운영용 **시연 프로젝트**이며 전자서명 인증이나 규제 준수를 보장하지 않습니다. 실제 사용하려면 반드시 사용자 인증, 역할별 접근 권한(RBAC), 파일 접근 통제, 변경 불가능한 감사기록, 데이터 암호화, 백업·복원 및 관계 법규 확인이 필요합니다. 인증 기능이 구현되기 전에는 **실제 시료·사람·서명 데이터를 입력하지 마세요.**
+
+## 포트폴리오에서의 의미
+
+반복적인 확인 업무를 **상태 기록, 책임자 정보, 이력 조회**로 구조화하고 이를 웹 UI와 DB로 구현한 사례입니다. 실제 현장 경험을 기술로 발전시킨 프로토타입이므로, 개발 시점과 과거 업무 개선 성과를 구분해 설명합니다.
