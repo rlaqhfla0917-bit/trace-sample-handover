@@ -1,0 +1,26 @@
+<!doctype html><html lang="ko"><head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>{% block title %}TRACE{% endblock %} · 시료 인수인계</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link href="/static/app.css" rel="stylesheet"/>
+</head><body>
+<div class="workspace">
+ <aside class="rail">
+  <a class="logo" href="/"><span class="logo-glyph">✳</span><span>trace<span class="logo-dot">.</span></span></a>
+  <span class="rail-subtitle">SAMPLE CARE SYSTEM</span>
+  <nav class="nav">
+   <a class="nav-item {% if active == 'home' %}active{% endif %}" href="/"><span>▦</span> 대시보드</a>
+   <a class="nav-item {% if active == 'new' %}active{% endif %}" href="/new"><span>⊕</span> 시료 신규 등록</a>
+   <a class="nav-item" href="/export.csv"><span>↧</span> 이력 CSV 내보내기</a>
+  </nav>
+  <div class="rail-bottom"><span class="status-dot"></span> LOCAL DEMO <small>가상 정보 · 로컬 실행 전용</small></div>
+ </aside>
+ <main class="page">
+  <header class="topbar"><div class="crumb">WORKSPACE / <b>시료 이력 관리</b></div><div class="top-right"><span class="preview-pill">● DEMO MODE</span><div class="avatar">T</div></div></header>
+  {% block content %}{% endblock %}
+  <footer class="footer">© {{year}} TRACE · 시료 이동을 한눈에 <span>시범용 앱 · 실제 인수인계의 법적 증빙 시스템 아님</span></footer>
+ </main>
+</div>
+<script src="/static/app.js" defer></script>
+</body></html>
