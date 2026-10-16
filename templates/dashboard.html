@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block title %}대시보드{% endblock %}
+{% block content %}
+<div class="headline"><div><span class="eyebrow">GOOD RECORDS. SMOOTH HANDOVERS.</span><h1>시료의 모든 이동을,<br><em>하나의 기록으로.</em></h1><p>누가, 언제, 어디서 전달했는지 확인할 수 있는 시료 인수인계 대시보드</p></div><div class="headline-graphic"><span class="float-label one">📍 보관 위치 확인</span><span class="graphic-main">🧪</span><span class="float-label two">✓ 이력 기록 완료</span></div></div>
+<div class="metrics">
+ <div class="metric mint"><div class="metric-ico">▧</div><div class="metric-label">전체 등록 시료</div><strong>{{stats.total}}</strong><span>누적 등록 건수</span></div>
+ <div class="metric peach"><div class="metric-ico">⌂</div><div class="metric-label">현재 보관 중</div><strong>{{stats.stored or 0}}</strong><span>최초 등록 / 보관 상태</span></div>
+ <div class="metric lilac"><div class="metric-ico">✓</div><div class="metric-label">인수 완료</div><strong>{{stats.handed or 0}}</strong><span>인수자 확인 기록 존재</span></div>
+</div>
+<div class="layout-columns">
+ <section class="panel main-panel">
+  <div class="panel-heading"><div><span class="eyebrow">INVENTORY</span><h2>시료 목록</h2></div><a class="action" href="/new">+ 새 시료 등록</a></div>
+  <form class="filters" method="get" action="/"><input type="search" name="q" value="{{q}}" placeholder="시료코드, 이름, 프로젝트, 담당자 검색"/><select name="status"><option value="전체" {% if status=='전체' %}selected{% endif %}>전체 상태</option><option value="보관 중" {% if status=='보관 중' %}selected{% endif %}>보관 중</option><option value="인수 완료" {% if status=='인수 완료' %}selected{% endif %}>인수 완료</option></select><button class="subtle-button" type="submit">조회</button></form>
+  <div class="table-wrap"><table><thead><tr><th>시료 정보</th><th>프로젝트</th><th>현재 담당자</th><th>상태</th><th></th></tr></thead><tbody>
+  {% for row in rows %}<tr><td><div class="sample-name">{{row.label}}</div><div class="sample-code">{{row.sample_code}}</div></td><td class="muted-cell">{{row.project}}</td><td class="muted-cell">{{row.current_custodian}}</td><td><span class="state {% if row.status=='인수 완료' %}state-done{% endif %}">{{row.status}}</span></td><td><a class="open-row" href="/specimens/{{row.id}}">상세 ↗</a></td></tr>
+  {% else %}<tr><td colspan="5" class="empty-table">조회할 시료가 없습니다. 신규 시료를 등록해 주세요.</td></tr>{% endfor %}
+  </tbody></table></div>
+ </section>
+ <aside class="panel activity-panel"><div class="panel-heading"><div><span class="eyebrow">TIMELINE</span><h2>최근 이력</h2></div></div><div class="activity-list">
+  {% for e in recent %}<a class="activity" href="/specimens/{{e.specimen_id}}"><span class="activity-dot {% if e.event_type=='인계·인수' %}dark{% endif %}"></span><div><b>{{e.event_type}}</b><p>{{e.label}}</p><small>{{e.created_at}} · {{e.to_person}}</small></div></a>
+  {% else %}<p class="empty-activity">이력이 생성되면 여기에 표시됩니다.</p>{% endfor %}
+ </div><div class="activity-footer">🔒 이력은 수정 대신 새 이벤트로 누적합니다.</div></aside>
+</div>
+<div class="disclaimer">💡 <b>시연 안내:</b> 최초 화면의 가상 시료는 프로젝트 시연용 데이터입니다. 인증·접근권한이 없는 MVP이므로 실제 담당자 정보나 인수 서명은 입력하지 마세요.</div>
+{% endblock %}
