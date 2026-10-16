@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block title %}신규 등록{% endblock %}
+{% block content %}
+<div class="section-title"><div><span class="eyebrow">REGISTER / NEW SPECIMEN</span><h1>새 시료 등록</h1><p>시료의 현재 보관 상태부터 정확하게 기록해 주세요.</p></div><a href="/" class="subtle-button">← 목록으로</a></div>
+<div class="form-shell"><form class="entry-form" method="post" action="/specimens" enctype="multipart/form-data">
+ <div class="form-group-title"><span>01</span><div><h2>시료 기본 정보</h2><p>이름과 식별 코드를 입력합니다.</p></div></div>
+ <div class="form-grid"><label>시료 코드 <b>*</b><input name="sample_code" placeholder="예: SMP-2026-005" required pattern="[A-Za-z0-9_-]+"/></label><label>시료명 <b>*</b><input name="label" placeholder="예: 해수 시료 W-12" required/></label><label>시료 유형 <b>*</b><select name="sample_type" required><option value="">선택해 주세요</option><option>해수</option><option>퇴적물</option><option>저서생물</option><option>식물플랑크톤</option><option>동물플랑크톤</option><option>기타</option></select></label><label>프로젝트 <b>*</b><input name="project" placeholder="예: 연안 모니터링 시범조사" required/></label><label>수량 <b>*</b><input name="quantity" type="number" step="0.1" min="0.1" value="1" required/></label><label>단위 <b>*</b><select name="unit" required><option>병</option><option>봉투</option><option>개</option><option>통</option><option>박스</option><option>g</option><option>kg</option></select></label></div>
+ <div class="form-group-title spaced"><span>02</span><div><h2>보관 및 담당 정보</h2><p>현재 위치와 관리 책임자를 남깁니다.</p></div></div>
+ <div class="form-grid"><label>현재 보관 장소 <b>*</b><input name="location" placeholder="예: 냉장보관실 A-2" required/></label><label>현재 담당자 <b>*</b><input name="custodian" placeholder="예: 담당자 가" required/></label></div>
+ <label class="full-label">사진 첨부 (선택)<input type="file" name="photo" accept="image/png,image/jpeg,image/webp"/><small>JPG · PNG · WEBP / 최대 5MB · 실제 회사 시료 사진 대신 가상 데이터를 권장합니다.</small></label>
+ <label class="full-label">특이사항<textarea name="notes" rows="3" placeholder="보관 조건, 채취 지점 등 필요한 추가 정보를 적어 주세요."></textarea></label>
+ <div class="form-actions"><a href="/" class="plain-button">취소</a><button class="action" type="submit">+ 시료 등록하기</button></div>
+</form><aside class="guide"><div class="guide-art">🧪</div><h3>한눈에 확인하는<br>시료의 이동 이력</h3><p>등록한 다음에는 해당 시료 화면에서 인계·인수 시각, 인수자, 보관 위치, 사진, 서명 확인 내용을 차례대로 관리할 수 있어요.</p><ul><li>중복 코드 등록 방지</li><li>인계·인수 확인 서명</li><li>변경 이력 자동 누적</li><li>CSV 내보내기</li></ul></aside></div>
+{% endblock %}
