@@ -101,3 +101,13 @@ def test_validation_bad_content_and_media_protection():
 def test_search():
     r=client.get('/?q=%EA%B0%80%EC%83%81+%ED%95%B4%EC%88%98')
     assert r.status_code==200
+
+
+def test_export_csv_does_not_execute_spreadsheet_formulas():
+    data=specimen_form("CSV-INJECTION")
+    data["label"]="=HYPERLINK(\"https://example.org\",\"click\")"
+    created=client.post("/specimens",data=data,follow_redirects=False)
+    assert created.status_code == 303
+    exported=client.get("/export.csv").content.decode("utf-8-sig")
+    assert "'=HYPERLINK(" in exported
+    assert "CSV-INJECTION" in exported

@@ -276,7 +276,15 @@ def export_csv():
     writer=csv.writer(stream)
     writer.writerow(columns)
     for r in rows:
-        writer.writerow(list(r))
+        # Protect reviewers opening exported records in spreadsheet programs.
+        # CSV quoting does not prevent formula execution in Excel/Sheets.
+        safe = []
+        for cell in r:
+            value = str(cell) if cell is not None else ""
+            if value.lstrip().startswith(("=", "+", "-", "@", "\\t", "\\r", "\\n")):
+                value = "\'" + value
+            safe.append(value)
+        writer.writerow(safe)
     content="\ufeff"+stream.getvalue()
     return StreamingResponse(iter([content.encode("utf-8")]), media_type="text/csv; charset=utf-8",headers={"Content-Disposition":"attachment; filename=handover_audit.csv"})
 
